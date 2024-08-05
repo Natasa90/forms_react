@@ -1,11 +1,10 @@
 import { FC, useState, ChangeEvent } from 'react'
 import { Input } from '../input'
-import { Survey } from '../survey';
+import { Survey } from '../survey'
 import { SubmitButton } from '../submitButton';
 
-interface programmingLangProps {
+interface UserLangProps {
     languages: string [];
-    answers: string [];
 }
 
 export const FormData: FC = () => { 
@@ -32,81 +31,100 @@ export const FormData: FC = () => {
     const updateEmployment = (e: ChangeEvent<HTMLInputElement>): void => {
         const usersEmployment = e.target.checked;
         setEmployment(usersEmployment); 
-
     }
 
-    const [programmingLang, setProgrammingLang] = useState<programmingLangProps> ({
-        languages: [],
-        answers: []
-    })
-    
-    const handleChangeLang = (e: ChangeEvent<HTMLInputElement>): void => {
-        const { value, checked } = e.target; 
-        const { languages } = programmingLang;
+    const [userLang, setUserLang] = useState<UserLangProps>({languages: []}); 
+
+    const updateUserLang = (e: ChangeEvent<HTMLInputElement>) => {
+        const {value, checked} = e.target; 
+        const { languages } = userLang; 
         
         if (checked) {
-            console.log(`${value} is ${checked}`);
-        } 
+            setUserLang({
+                languages: [...languages, value] 
+            })
+        }else {
+            setUserLang({
+                languages: languages.filter(lan => lan !== value)
+            })
+        }
     }
 
-    const handleSubmit = (): void => {
-        console.log(userName)
-        console.log(password)
-        console.log(phoneNumber)
-        console.log(`Employed? ${isEmployed}`)
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false); 
+
+    const handleSubmitted = () => {
+        setIsSubmitted(true); 
     }
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', margin:'0 auto', width: '200px', gap: '10px'}}>
+            <form>
             <Input 
+                type='text'
                 label="User name:" 
                 name="userName" 
                 placeholder="John Pitt" 
                 handleOnChange={updateUserName}
             />
             <Input 
+                type='text'
                 label="Password:" 
                 name="password" 
                 placeholder="12345" 
                 handleOnChange={updatePassword}
             />
             <Input 
+                type='text'
                 label="Phone number:" 
                 name="phoneNumber" 
                 placeholder="7733084424" 
                 handleOnChange={updatePhoneNumber}
             />
-            <label> Employed: 
-                <input type='checkbox' name="agree" onChange={updateEmployment}/>
-            </label>
-            <div style={{display: 'flex', flexDirection: 'column', width: '300px', gap: '10'}}> 
-                <p>Your programming language:</p>
-                <Survey 
-                    type='checkbox' 
-                    value='Python' 
-                    id='language' 
-                    handleChange={handleChangeLang}
-                 />
-                <Survey 
-                    type='checkbox' 
-                    value='JavaScript' 
-                    id='language' 
-                    handleChange={handleChangeLang}
+             <Input 
+                type='checkbox'
+                label="Employed?" 
+                name="isEmployed" 
+                placeholder="" 
+                handleOnChange={updateEmployment}
+            />
+            <div style={{display: 'flex', flexDirection: 'column', margin:'0 auto', width: '200px', gap: '10px'}}>
+                <Survey
+                    type='checkbox'
+                    value='Javascript'
+                    id = '1'
+                    handleChange={updateUserLang}
                 />
-                <Survey 
-                    type='checkbox' 
-                    value='C++' 
-                    id='language' 
-                    handleChange={handleChangeLang}
+                <Survey
+                    type='checkbox'
+                    value='Java'
+                    id = '2'
+                    handleChange={updateUserLang}
                 />
-                <Survey 
-                    type='checkbox' 
-                    value='Java' 
-                    id='language' 
-                    handleChange={handleChangeLang}
+                <Survey
+                    type='checkbox'
+                    value='Python'
+                    id = '3'
+                    handleChange={updateUserLang}
+                />
+                <Survey
+                    type='checkbox'
+                    value='C++'
+                    id = '4'
+                    handleChange={updateUserLang}
                 />
             </div>
-            <SubmitButton onClick={handleSubmit}/>
+            </form>
+            <SubmitButton onClick={handleSubmitted}/>
+            {isSubmitted && (
+                <div>
+                    <h3>Submitted Form:</h3>
+                    <p>Your name: {userName}</p>
+                    <p>Your password: {password}</p>
+                    <p>Your phone number: {phoneNumber}</p>
+                    <p>Employed: {isEmployed ? 'yes' : 'no'}</p>
+                    <p>Languages learnt: {userLang.languages.map((lang) => <li>{lang}</li>)}</p>
+                </div>
+            )}
         </div>
     )
 }
